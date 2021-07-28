@@ -16,8 +16,7 @@ gd(du,u,p,t) = gderivative(du,u,langevin)
 
 u0 = [0.63,0.03]
 prob = SDEProblem(fd,gd,u0,(0.0,0.0015))
-#prob = SDEProblem(fderivative,gderivative,u0,(0.0,0.15))
 sol = solve(prob,EM(),dt=0.0001)
-println(sol)
-plotly()
-plot(sol)
+println(sol.u)
+#plt = plot(sol)
+#display(plt)
