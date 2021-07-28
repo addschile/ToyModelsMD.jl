@@ -18,9 +18,11 @@ mutable struct ThermostattedSystem <: AbstractSystem
 end
 
 function fderivative(du::AbstractArray,u::AbstractArray,sys::AbstractSystem)
+  du .*= 0.0
   force!(u,du,sys.em,sys.model)
 end
 
 function gderivative(du::AbstractArray,u::AbstractArray,therm::AbstractThermostat)
+  du .*= 0.0
   diffusion!(du,therm)
 end

@@ -1,3 +1,6 @@
+function runtraj!(nsteps::Int64,dt::Float64,system::System)
+end
+
 function integrate!(nsteps::Int64,dt::Float64,system::System)
   # forward euler integrator
   vector<double> f = force(x);
