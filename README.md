@@ -1,2 +1,2 @@
-# MullerBrown
-julia code to simulate a single particle in the Muller-Brown potential
+# ToyModelsMD
+julia code to simulate molecular dynamics of toy models such as a single particle in the Muller-Brown potential
