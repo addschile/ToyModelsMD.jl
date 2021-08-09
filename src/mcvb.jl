@@ -39,8 +39,8 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
   # compute gradient of variable force and update ydot
   jacobian!(cb.mvydot,system,mm.potentials[length(mm.potentials)])
   cb.mvydot .*= (sqrt(dt)/system.thermostat.scale)
-  #cb.mvy .+= (cb.mvydot*system.thermostat.rands)
-  cb.mvy .+= (cb.mvydot*ones(Float64,2))
+  cb.mvy .+= (cb.mvydot*system.thermostat.rands)
+  #cb.mvy .+= (cb.mvydot*ones(Float64,2))
 
   # calculate value baseline function
   vval::Float64 = callvbl(system,cb.vbl)
