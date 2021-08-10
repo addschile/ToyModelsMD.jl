@@ -14,7 +14,7 @@ export AbstractSystem,System,ThermostattedSystem
 export fderivative,gderivative
 # Callbacks
 export AbstractCallback,Callback
-export MCVBCallback
+export MCVBCallback,initialize!
 # integrators
 export StochasticEuler,runtraj!
 # valuebaseline functions
