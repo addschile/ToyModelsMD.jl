@@ -29,6 +29,19 @@ mutable struct MCVBCallback <: AbstractCallback
 end
 
 """
+Function that zeros all the quantities for restarting trajectories
+"""
+function initialize!(cb::MCVBCallback)
+  cb.dkl = 0.0
+  cb.mvy .= 0.0
+  cb.mvydot .= 0.0
+  cb.gradf .= 0.0
+  cb.mvz .= 0.0
+  cb.mvzdot .= 0.0
+  cb.gradv .= 0.0
+end
+
+"""
 Implementation of the Monte Carlo Value Baseline algorithm
 """
 function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...)
@@ -40,7 +53,6 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
   jacobian!(cb.mvydot,system,mm.potentials[length(mm.potentials)])
   cb.mvydot .*= (sqrt(dt)/system.thermostat.scale)
   cb.mvy .+= (cb.mvydot*system.thermostat.rands)
-  #cb.mvy .+= (cb.mvydot*ones(Float64,2))
 
   # calculate value baseline function
   vval::Float64 = callvbl(system,cb.vbl)
@@ -55,10 +67,51 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
 
   # action difference - positive term
   cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
-  #cb.em .= (system.thermostat.scale/sqrt(dt) .* ones(Float64,2)).^2
   # action difference - negative term
   cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
-  #cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* ones(Float64,2)).^2
+  # compute return
+  rval += sum(cb.em) / (2*system.thermostat.scale^2)
+#  rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
+
+  # observable bias
+#  rval += cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
+
+  # add return to KL divergence
+  cb.dkl += rval*dt
+
+  # update the gradients of the force parameters and the value baseline parameters
+#  cb.gradf .+= dt .* ((rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands)))
+#  cb.gradv .+= dt .* ((rval .* cb.mvz) .- (vval .* cb.mvzdot))
+  cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
+  cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
+end
+
+"""
+function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...)
+  # extract some arguments
+  ind::Int64 = args[1]
+  dt::Float64 = args[2]
+
+  # compute gradient of variable force and update ydot
+  jacobian!(cb.mvydot,system,mm.potentials[length(mm.potentials)])
+  cb.mvydot .*= (sqrt(dt)/system.thermostat.scale)
+  cb.mvy .+= (cb.mvydot*ones(Float64,2))
+
+  # calculate value baseline function
+  vval::Float64 = callvbl(system,cb.vbl)
+
+  # compute gradient of value baseline
+  gradient!(cb.mvzdot,system,cb.vbl)
+  cb.mvz .+= (dt .* cb.mvzdot)
+
+  ### compute the instantaneous return
+  # observable bias
+  rval::Float64 = cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
+
+  # action difference - positive term
+  cb.em .= (system.thermostat.scale/sqrt(dt) .* ones(Float64,2)).^2
+  # action difference - negative term
+  cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* ones(Float64,2)).^2
   # compute return
   rval += sum(cb.em) / (2*system.thermostat.scale^2)
 
@@ -66,7 +119,7 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
   cb.dkl += rval*dt
 
   # update the gradients of the force parameters and the value baseline parameters
-  cb.gradf .+= (rval .* cb.mvy) .- (vval .* (cb.mvydot*system.thermostat.rands))
-  #cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*ones(Float64,2)))
+  cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*ones(Float64,2)))
   cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
 end
+"""
