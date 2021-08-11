@@ -37,9 +37,9 @@ end
 Stochastic Euler integration scheme
 """
 mutable struct StochasticEuler <: AbstractIntegrator
-  system::ThermostattedSystem
+  system::AbstractThermostattedSystem
   model::AbstractPotential
-  function StochasticEuler(system::ThermostattedSystem,model::AbstractPotential)
+  function StochasticEuler(system::AbstractThermostattedSystem,model::AbstractPotential)
     new(system,model)
   end
 end
@@ -83,7 +83,8 @@ function step!(ind::Int64,dt::Float64,int::StochasticEuler,cb::AbstractCallback)
   # update with drift
   addforce!(dt,int.system,int.model)
   # update with diffusion
-  int.system.x .+= (sqrt(dt)*int.system.thermostat.scale) .* int.system.thermostat.rands
+  int.system.x .+= (sqrt(dt) .* int.system.thermostat.scale .* int.system.thermostat.rands)
+  #int.system.x .+= (sqrt(dt) * int.system.thermostat.scale) .* int.system.thermostat.rands
   # update time
   int.system.t += dt
 end
