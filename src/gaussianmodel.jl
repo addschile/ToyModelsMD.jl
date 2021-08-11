@@ -1,5 +1,6 @@
 ### struct for defining a Gaussian force model
 mutable struct GaussianModel2D <: AbstractPotential
+  dim::Int64
   nx::Int64
   ny::Int64
   nt::Int64
@@ -16,7 +17,7 @@ mutable struct GaussianModel2D <: AbstractPotential
                            mux::Vector{Float64},muy::Vector{Float64},mut::Vector{Float64},
                            sigx::Vector{Float64},sigy::Vector{Float64},sigt::Vector{Float64},
                            cs::Matrix{Float64})
-    new(nx,ny,nt,mux,muy,mut,sigx,sigy,sigt,cs,zeros(Float64,2),zeros(Float64,(nx*ny*nt)))
+    new(2,nx,ny,nt,mux,muy,mut,sigx,sigy,sigt,cs,zeros(Float64,2),zeros(Float64,(nx*ny*nt)))
   end
 end
 

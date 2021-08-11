@@ -1,6 +1,7 @@
 ### struct for defining the Muller-Brown potential
 #mutable struct MullerBrown <: AbstractPotential
 struct MullerBrown <: AbstractPotential
+  dim::Int64
   A::Vector{Float64}
   a::Vector{Float64}
   b::Vector{Float64}
@@ -10,7 +11,7 @@ struct MullerBrown <: AbstractPotential
   f::Vector{Float64}
   em::Vector{Float64}
   function MullerBrown()
-    new([-200.,-100.,-170.,15.],[-1.,-1.,-6.5,0.7],[0.,0.,11.,0.6],[-10.,-10.,-6.5,0.7],[1.,0.,-0.5,-1.],[0.,0.5,1.5,1.],zeros(Float64,2),zeros(Float64,12))
+    new(2,[-200.,-100.,-170.,15.],[-1.,-1.,-6.5,0.7],[0.,0.,11.,0.6],[-10.,-10.,-6.5,0.7],[1.,0.,-0.5,-1.],[0.,0.5,1.5,1.],zeros(Float64,2),zeros(Float64,12))
   end
 end
 
