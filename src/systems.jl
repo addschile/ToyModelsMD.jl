@@ -67,7 +67,12 @@ function ActiveBrownianSystem(v0::Float64,model::AbstractPotential,thermostat::A
 end
 
 function addforce!(dt::Float64,sys::ActiveBrownianSystem,model::AbstractPotential)
-  @. @views sys.x[1:sys.dim-1] .+= dt .* (model.f + (sys.v0 .* [cos(sys.x[end]),sin(sys.x[end])]))
+  if model.dim == sys.dim
+    sys.x += dt .* model.f
+    @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
+  else
+    @. @views sys.x[1:sys.dim-1] .+= dt .* (model.f[1:sys.dim-1] + (sys.v0 .* [cos(sys.x[end]),sin(sys.x[end])]))
+  end
 end
 
 #function fderivative(du::AbstractArray,u::AbstractArray,sys::AbstractSystem)

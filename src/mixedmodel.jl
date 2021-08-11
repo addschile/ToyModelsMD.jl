@@ -40,13 +40,18 @@ end
 
 function addforce!(dt::Float64,system::AbstractSystem,mm::MixedModel)
   for pot in mm.potentials
-    system.x .+= dt .* pot.f
+    addforce!(dt,system,pot)
+    #system.x .+= dt .* pot.f
   end
 end
 
 function addforce!(dt::Float64,sys::ActiveBrownianSystem,mm::MixedModel)
   for pot in mm.potentials
-    @. @views sys.x[1:sys.dim-1] .+= dt .* pot.f
+    if pot.dim == sys.dim
+      sys.x += dt .* pot.f
+    else
+      @. @views sys.x[1:sys.dim-1] .+= dt .* pot.f[1:sys.dim-1]
+    end
   end
   @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
 end
