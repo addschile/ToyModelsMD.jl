@@ -44,6 +44,13 @@ function addforce!(dt::Float64,system::AbstractSystem,mm::MixedModel)
   end
 end
 
+function addforce!(dt::Float64,sys::ActiveBrownianSystem,mm::MixedModel)
+  for pot in mm.potentials
+    @. @views sys.x[1:sys.dim-1] .+= dt .* pot.f
+  end
+  @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
+end
+
 """
 Compute the gradient of the parameters for a particular model
 """
