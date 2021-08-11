@@ -8,10 +8,13 @@ export GaussianModel2D
 export NNModel
 export MixedModel
 # thermostats
+export AbstractThermostat
 export Langevin
+export ActiveLangevin
 # systems
-export AbstractSystem,System,ThermostattedSystem
-export fderivative,gderivative
+export AbstractSystem,AbstractThermostattedSystem
+export System,ThermostattedSystem,ActiveBrownianSystem
+#export fderivative,gderivative
 # Callbacks
 export AbstractCallback,Callback
 export MCVBCallback,initialize!
