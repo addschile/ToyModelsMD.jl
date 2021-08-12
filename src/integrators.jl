@@ -84,7 +84,6 @@ function step!(ind::Int64,dt::Float64,int::StochasticEuler,cb::AbstractCallback)
   addforce!(dt,int.system,int.model)
   # update with diffusion
   int.system.x .+= (sqrt(dt) .* int.system.thermostat.scale .* int.system.thermostat.rands)
-  #int.system.x .+= (sqrt(dt) * int.system.thermostat.scale) .* int.system.thermostat.rands
   # update time
   int.system.t += dt
 end

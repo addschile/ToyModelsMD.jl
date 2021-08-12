@@ -41,7 +41,6 @@ end
 function addforce!(dt::Float64,system::AbstractSystem,mm::MixedModel)
   for pot in mm.potentials
     addforce!(dt,system,pot)
-    #system.x .+= dt .* pot.f
   end
 end
 
