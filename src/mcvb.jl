@@ -62,26 +62,24 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
   cb.mvz .+= (dt .* cb.mvzdot)
 
   ### compute the instantaneous return
-  # observable bias
-  rval::Float64 = cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
+#  # observable bias
+#  rval::Float64 = cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
 
   # action difference - positive term
   cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
   # action difference - negative term
   cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
   # compute return
-  rval += sum(cb.em) / (2*system.thermostat.scale^2)
-#  rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
-
-  # observable bias
-#  rval += cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
+#  rval += sum(cb.em) / (2*system.thermostat.scale^2)
+  rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
 
   # add return to KL divergence
   cb.dkl += rval*dt
 
+  # observable bias
+  rval += cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
+
   # update the gradients of the force parameters and the value baseline parameters
-#  cb.gradf .+= dt .* ((rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands)))
-#  cb.gradv .+= dt .* ((rval .* cb.mvz) .- (vval .* cb.mvzdot))
   cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
   cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
 end
