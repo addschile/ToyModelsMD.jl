@@ -1,0 +1,9 @@
+name = "ToyModelsMD"
+uuid = "7d52246c-ff8a-11eb-3eb3-5f80fa1c09f9"
+authors = ["Addison Schile <addschile@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
