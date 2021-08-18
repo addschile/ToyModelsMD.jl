@@ -4,7 +4,7 @@ using Zygote:Params,Grads
 using Zygote:jacobian
 
 ### struct for defining the Muller-Brown potential
-mutable struct NNModel <: AbstractPotential
+mutable struct NNModel <: AbstractSinglePotential
   dim::Int64
   pars::Params
   pinfo::Vector{Tuple{Int64, Vararg{Int64, N} where N}}

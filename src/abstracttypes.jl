@@ -1,6 +1,7 @@
 # models/potentials
 abstract type AbstractPotential end
 abstract type AbstractMixedModel <: AbstractPotential end
+abstract type AbstractSinglePotential <: AbstractPotential end
 
 # systems
 abstract type AbstractSystem end

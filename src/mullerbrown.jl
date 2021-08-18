@@ -1,5 +1,5 @@
 ### struct for defining the Muller-Brown potential
-mutable struct MullerBrown <: AbstractPotential
+mutable struct MullerBrown <: AbstractSinglePotential
   dim::Int64
   A::Vector{Float64}
   a::Vector{Float64}

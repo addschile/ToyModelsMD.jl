@@ -1,5 +1,6 @@
 ### struct for defining a Gaussian force model
-mutable struct GaussianModel2D <: AbstractPotential
+#mutable struct GaussianModel2D <: AbstractPotential
+mutable struct GaussianModel2D <: AbstractSinglePotential
   dim::Int64
   nx::Int64
   ny::Int64
