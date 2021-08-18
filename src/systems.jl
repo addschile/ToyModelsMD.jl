@@ -131,8 +131,8 @@ end
 function addforce!(dt::Float64,sys::ActiveBrownianSystem,model::AbstractSinglePotential)
   if model.dim == sys.dim
     sys.x += dt .* model.f ./ system.thermostat.gamma
-    @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
+#    @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
   else
-    @. @views sys.x[1:sys.dim-1] .+= dt .* (model.f[1:sys.dim-1] ./ system.thermostat.gamma[1:sys.dim-1] + (sys.v0 .* [cos(sys.x[end]),sin(sys.x[end])]))
+    @. @views sys.x[1:sys.dim-1] .+= dt .* (model.f[1:sys.dim-1] ./ system.thermostat.gamma[1:sys.dim-1])
   end
 end
