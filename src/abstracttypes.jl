@@ -6,6 +6,7 @@ abstract type AbstractSinglePotential <: AbstractPotential end
 # systems
 abstract type AbstractSystem end
 abstract type AbstractThermostattedSystem <: AbstractSystem end
+abstract type AbstractActiveSystem <: AbstractThermostattedSystem end
 
 # thermostats
 abstract type AbstractThermostat end
