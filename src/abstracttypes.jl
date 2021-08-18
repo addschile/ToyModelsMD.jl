@@ -18,3 +18,6 @@ abstract type AbstractCallback end
 
 # reinforcement learning types
 abstract type AbstractValueBaseline end
+
+# optimizer types
+abstract type AbstractOptimizer end
