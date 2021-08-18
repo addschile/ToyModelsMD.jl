@@ -17,6 +17,10 @@ mutable struct Langevin <: AbstractLangevin
 end
 Langevin(T::Float64,gamma::Float64) = Langevin(T,gamma,rand(UInt64))
 
+function applythermostat!(dt::Float64,sys::AbstractThermostattedSystem,langevin::Langevin)
+  sys.x .+= (sqrt(dt) * langevin.scale) .* langevin.rands
+end
+
 """
 Langevin thermostat for a single particle with different frictions per DoF
 """
@@ -32,6 +36,12 @@ mutable struct LangevinND <: AbstractLangevin
   end
 end
 LangevinND(T::Float64,gamma::Vector{Float64}) = LangevinND(T,gamma,rand(UInt64))
+
+function applythermostat!(dt::Float64,sys::AbstractThermostattedSystem,langevin::LangevinND)
+  sys.x .+= (sqrt(dt) .* langevin.scale .* langevin.rands)
+end
+
+
 
 """
 Langevin thermostat for a single active particle
@@ -53,6 +63,12 @@ mutable struct ActiveLangevin <: AbstractLangevin
   end
 end
 ActiveLangevin(dim::Int64,Tt::Float64,gammat::Float64,Tr::Float64,gammar::Float64) = ActiveLangevin(dim,Tt,gammat,Tr,gammar,rand(UInt64))
+
+# TODO need to make this work
+function applythermostat!(dt::Float64,sys::AbstractActiveSystem,langevin::ActiveLangevin)
+  @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
+  sys.x .+= (sqrt(dt) .* langevin.scale .* langevin.rands)
+end
 
 """
 Functions for access to the random number generator
