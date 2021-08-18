@@ -9,7 +9,7 @@ export NNModel
 export MixedModel
 # thermostats
 export AbstractThermostat
-export Langevin
+export Langevin,LangevinND
 export ActiveLangevin
 # systems
 export AbstractSystem,AbstractThermostattedSystem
@@ -17,17 +17,18 @@ export System,ThermostattedSystem,ActiveBrownianSystem
 #export fderivative,gderivative
 # Callbacks
 export AbstractCallback,Callback
-export MCVBCallback,initialize!
+export MCVBCallback,initialize!,initializeall!
 # integrators
 export StochasticEuler,runtraj!
 # valuebaseline functions
 export AbstractValueBaseline
 export GaussianValueBaseline2D
 export NNValueBaseline
-
 ## Monte Carlo samplers
 #export MCSampler,BiasedMCSampler
 #export sweep!,step!
+# training algorithms
+export mcvbtrainsgd!,mcvbtrainsgdpar!
 
 include("abstracttypes.jl")
 include("potentials.jl")
@@ -43,5 +44,6 @@ include("mcvb.jl")
 include("gaussianvaluebaseline.jl")
 include("nnvaluebaseline.jl")
 #include("montecarlo.jl")
+include("trainforces.jl")
 
 end
