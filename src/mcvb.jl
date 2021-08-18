@@ -1,6 +1,7 @@
 mutable struct MCVBCallback <: AbstractCallback
   every::Int64
   dkl::Float64
+  aval::Float64
   # biasing observables
   Afunc::Function
   #Bfunc::Function
@@ -16,6 +17,8 @@ mutable struct MCVBCallback <: AbstractCallback
   vbl::AbstractValueBaseline
   # extra memory for computing some stuff
   em::Array{Float64}
+  # IO stuff for writing things to files
+  #avgsio::Union{IO,nothing}
   function MCVBCallback(Afunc::Function,model::AbstractPotential,vbl::AbstractValueBaseline)
     mvy::Array{Float64} = zeros(Float64,gradshape(model))
     mvydot::Array{Float64} = zeros(Float64,jacshape(model))
@@ -24,7 +27,7 @@ mutable struct MCVBCallback <: AbstractCallback
     mvzdot::Array{Float64} = zeros(Float64,gradshape(vbl))
     gradv::Array{Float64} = zeros(Float64,gradshape(vbl))
     em = zeros(Float64,getdimensionality(model))
-    new(1,0.0,Afunc,mvy,mvydot,gradf,mvz,mvzdot,gradv,vbl,em)
+    new(1,0.0,0.0,Afunc,mvy,mvydot,gradf,mvz,mvzdot,gradv,vbl,em)
   end
 end
 
@@ -32,13 +35,38 @@ end
 Function that zeros all the quantities for restarting trajectories
 """
 function initialize!(cb::MCVBCallback)
+  cb.mvy .= 0.0
+  cb.mvydot .= 0.0
+  cb.mvz .= 0.0
+  cb.mvzdot .= 0.0
+end
+
+function initializeavgs!(cb::MCVBCallback)
   cb.dkl = 0.0
+  cb.aval = 0.0
+  cb.gradf .= 0.0
+  cb.gradv .= 0.0
+end
+
+function initializeall!(cb::MCVBCallback)
+  cb.dkl = 0.0
+  cb.aval = 0.0
   cb.mvy .= 0.0
   cb.mvydot .= 0.0
   cb.gradf .= 0.0
   cb.mvz .= 0.0
   cb.mvzdot .= 0.0
   cb.gradv .= 0.0
+end
+
+"""
+Function that averages all the quantities by the number of trajectories
+"""
+function average!(ntraj::Int64,cb::MCVBCallback)
+  cb.dkl /= ntraj
+  cb.aval /= ntraj
+  cb.gradf /= ntraj
+  cb.gradv /= ntraj
 end
 
 """
@@ -73,7 +101,9 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
   cb.dkl += rval*dt
 
   # observable bias
-  rval += cb.Afunc(system,mm,ind,dt)# + Bfunc(system,mm,ind,dt)
+  aval::Float64 = cb.Afunc(system,mm,ind,dt)
+  rval += aval# + Bfunc(system,mm,ind,dt)
+  cb.aval += aval
 
   # update the gradients of the force parameters and the value baseline parameters
   cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
