@@ -90,13 +90,14 @@ function zeroforce!(system::AbstractSystem)
   system.f .= 0.0
 end
 
-function addforce!(dt::Float64,system::AbstractSystem,model::AbstractPotential)
+function addforce!(dt::Float64,system::AbstractSystem,model::AbstractSinglePotential)
   system.x .+= dt .* model.f
 end
 
 # TODO maybe take this function out since it's a repeat of the one above
-function addforce!(dt::Float64,system::ThermostattedSystem,model::AbstractPotential)
-  system.x .+= dt .* model.f
+function addforce!(dt::Float64,system::ThermostattedSystem,model::AbstractSinglePotential)
+  system.x .+= dt .* model.f ./ system.thermostat.gamma
+#  system.x .+= dt .* model.f
 end
 
 # TODO do unit tests on Overdamped system before allowing this
@@ -127,7 +128,7 @@ function ActiveBrownianSystem(v0::Float64,model::AbstractPotential,thermostat::A
 end
 
 # TODO idk yet, but this needs to be fixed to allow the different gammas
-function addforce!(dt::Float64,sys::ActiveBrownianSystem,model::AbstractPotential)
+function addforce!(dt::Float64,sys::ActiveBrownianSystem,model::AbstractSinglePotential)
   if model.dim == sys.dim
     sys.x += dt .* model.f ./ system.thermostat.gamma
     @. @views sys.x[1:sys.dim-1] .+= (dt*sys.v0) .* [cos(sys.x[end]),sin(sys.x[end])]
