@@ -1,5 +1,6 @@
 struct DummyThermostat <: AbstractThermostat; end
 
+# TODO need to be able to thermostat DoFs individually!!!!
 """
 Generic Langevin thermostat for a single particle
 """
@@ -15,6 +16,22 @@ mutable struct Langevin <: AbstractLangevin
   end
 end
 Langevin(T::Float64,gamma::Float64) = Langevin(T,gamma,rand(UInt64))
+
+"""
+Langevin thermostat for a single particle with different frictions per DoF
+"""
+mutable struct LangevinND <: AbstractLangevin
+  T::Float64
+  gamma::Vector{Float64}
+  scale::Vector{Float64}
+  seed::UInt64
+  rng::AbstractRNG
+  rands::Vector{Float64}
+  function LangevinND(T::Float64,gamma::Vector{Float64},seed::UInt64)
+    new(T,gamma,sqrt.(2*T ./ gamma),seed,MersenneTwister(seed),[])
+  end
+end
+LangevinND(T::Float64,gamma::Vector{Float64}) = LangevinND(T,gamma,rand(UInt64))
 
 """
 Langevin thermostat for a single active particle
