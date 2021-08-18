@@ -1,8 +1,8 @@
 ### struct for defining a mixed-model potential
 mutable struct MixedModel <: AbstractMixedModel
   dim::Int64
-  potentials::Vector{AbstractPotential}
-  function MixedModel(dim::Int64,potentials::Vector{AbstractPotential})
+  potentials::Vector{T} where T <: AbstractPotential
+  function MixedModel(dim::Int64,potentials::Vector{T}) where T <: AbstractPotential
     new(dim,potentials)
   end
 end
