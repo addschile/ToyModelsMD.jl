@@ -25,7 +25,8 @@ function mcvbtrainsgd!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
                        t0::Float64,x0::Vector{Float64},lrf::Float64,lrv::Float64,
                        system::AbstractThermostattedSystem,model::MixedModel,
                        integrator::StochasticEuler,mcvb::MCVBCallback;
-                       printevery::Int64=1)
+                       restart=true,printevery::Int64=1,Ffile::String="coeffF",
+                       Vfile::String="coeffF")
 
   # start optimization
   for epoch in 1:nepochs
@@ -44,7 +45,7 @@ function mcvbtrainsgd!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
     average!(ntraj,mcvb)
 
     # TODO make nicer with IO
-    # write average quantities to file
+    # write average quantities to stdout
     println(mcvb.dkl," ",mcvb.aval)
     flush(stdout)
  
@@ -55,12 +56,15 @@ function mcvbtrainsgd!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
     updateparams!(lrv,mcvb.gradv,mcvb.vbl)
 
     # TODO file system handling and outpout
-    # write updated coefficients
-    writedlm("running_coeffF.txt",model.potentials[end].theta)
-    writedlm("running_coeffV.txt",mcvb.vbl.theta)
+    if restart
+      writedlm("running_coeffF.txt",model.potentials[end].theta)
+      writedlm("running_coeffV.txt",mcvb.vbl.theta)
+    end
+
     if epoch % printevery == 0
-      writedlm("coeffF_$epoch.txt",model.potentials[end].theta)
-      writedlm("coeffV_$epoch.txt",mcvb.vbl.theta)
+      # write updated coefficients
+      writedlm(Ffile*"_$epoch.txt",model.potentials[end].theta)
+      writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
     end
   
   end
@@ -75,7 +79,8 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
                           t0::Float64,x0::Vector{Float64},lrf::Float64,lrv::Float64,
                           system::AbstractThermostattedSystem,model::MixedModel,
                           integrator::StochasticEuler,mcvb::MCVBCallback;
-                          printevery::Int64=1)
+                          restart=true,printevery::Int64=1,Ffile::String="coeffF",
+                          Vfile::String="coeffF")
 
   comm::MPI.Comm = MPI.COMM_WORLD
   rank::Int64 = MPI.Comm_rank(comm)
@@ -125,7 +130,7 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
       average!(totntraj,mcvb)
 
       # TODO make nicer with IO
-      # write average quantities to file
+      # write average quantities to stdout
       println(mcvb.dkl," ",mcvb.aval)
       flush(stdout)
 
@@ -136,12 +141,15 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
       updateparams!(lrv,mcvb.gradv,mcvb.vbl)
 
       # TODO file system handling and outpout
-      # write updated coefficients
-      writedlm("running_coeffF.txt",model.potentials[end].theta)
-      writedlm("running_coeffV.txt",mcvb.vbl.theta)
+      if restart
+        writedlm("running_coeffF.txt",model.potentials[end].theta)
+        writedlm("running_coeffV.txt",mcvb.vbl.theta)
+      end
+
       if epoch % printevery == 0
-        writedlm("coeffF_$epoch.txt",model.potentials[end].theta)
-        writedlm("coeffV_$epoch.txt",mcvb.vbl.theta)
+        # write updated coefficients
+        writedlm(Ffile*"_$epoch.txt",model.potentials[end].theta)
+        writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
       end
  
     else
