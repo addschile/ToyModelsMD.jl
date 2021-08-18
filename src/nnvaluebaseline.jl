@@ -8,17 +8,17 @@ mutable struct NNValueBaseline <: AbstractValueBaseline
   pinfo::Vector{Tuple{Int64, Vararg{Int64, N} where N}}
   nn::Union{Chain,Dense}
   re::Any
+  theta::Vector
   function NNValueBaseline(nn::Union{Chain,Dense})
     pars = params(nn)
     pinfo = [size(p_) for p_ in pars]
-    th,re = destructure(nn)
-    new(pars,pinfo,nn,re)
+    theta,re = destructure(nn)
+    new(pars,pinfo,nn,re,theta)
   end
 end
 
 function gradshape(vbl::NNValueBaseline)
-  theta,re = destructure(vbl.nn)
-  return size(theta)[1]
+  return size(vbl.theta)[1]
 end
 
 function callvbl(sys::AbstractSystem,vbl::NNValueBaseline)
@@ -48,4 +48,28 @@ function gradient!(grad::Vector{Float64},sys::AbstractSystem,vbl::NNValueBaselin
     @views grad[bcount:ecount] .= vec(grads[vbl.pars[i]])
     bcount = ecount + 1
   end
+end
+
+"""
+Update parameters for the neural network value baseline
+"""
+function updateparams!(lr::Float64,dtheta::Vector{Float64},vbl::NNValueBaseline)
+    # update coefficients for forces
+    vbl.theta .+= (lr .* dtheta)
+    setparams!(vbl)
+end
+
+"""
+Set parameters for the neural network model
+"""
+function setparams!(vbl::NNValueBaseline)
+    # update coefficients for forces
+    vbl.nn = vbl.re(vbl.theta)
+    vbl.pars = params(vbl.nn)
+end
+
+function setparams!(theta::Vector{Float64},vbl::NNModel)
+    # update coefficients for forces
+    vbl.theta .= theta
+    setparams!(vbl)
 end

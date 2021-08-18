@@ -10,12 +10,13 @@ mutable struct NNModel <: AbstractPotential
   pinfo::Vector{Tuple{Int64, Vararg{Int64, N} where N}}
   nn::Union{Chain,Dense}
   re::Any
+  theta::Vector
   f::Vector{Float64}
   function NNModel(dim::Int64,nn::Union{Chain,Dense})
     pars = params(nn)
     pinfo = [size(p_) for p_ in pars]
     th,re = destructure(nn)
-    new(dim,pars,pinfo,nn,re,zeros(Float64,dim))
+    new(dim,pars,pinfo,nn,re,th,zeros(Float64,dim))
   end
 end
 
@@ -24,13 +25,11 @@ function getdimensionality(nnm::NNModel)
 end
 
 function jacshape(nnm::NNModel)
-  theta,re = destructure(nnm.nn)
-  return (size(theta)[1],nnm.dim)
+  return (size(nnm.theta)[1],nnm.dim)
 end
 
 function gradshape(nnm::NNModel)
-  theta,re = destructure(nnm.nn)
-  return size(theta)[1]
+  return size(nnm.theta)[1]
 end
 
 """
@@ -71,6 +70,30 @@ function jacobian!(jac::Array{Float64},sys::AbstractSystem,nnm::NNModel)
     @. @views jac[bcount:ecount,:] .= grads[nnm.pars[i]]'
     bcount = ecount + 1
   end
+end
+
+"""
+Update parameters for the neural network model
+"""
+function updateparams!(lr::Float64,dtheta::Vector{Float64},nnm::NNModel)
+    # update coefficients for forces
+    nnm.theta .+= (lr .* dtheta)
+    setparams!(nnm)
+end
+
+"""
+Set parameters for the neural network model
+"""
+function setparams!(nnm::NNModel)
+    # update coefficients for forces
+    nnm.nn = nnm.re(nnm.theta)
+    nnm.pars = params(nnm.nn)
+end
+
+function setparams!(theta::Vector{Float64},nnm::NNModel)
+    # update coefficients for forces
+    nnm.theta .= theta
+    setparams!(nnm)
 end
 
 #"""
