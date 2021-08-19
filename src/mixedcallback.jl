@@ -6,6 +6,7 @@ mutable struct MixedCallback <: AbstractCallback
     function MixedCallback(cbs::Vector{T}) where T <: AbstractCallback
         new(cbs)
     end
+end
 
 function callback(cbs::MixedCallback,system::AbstractSystem,model::AbstractPotential,args...)
     for cb in cbs
