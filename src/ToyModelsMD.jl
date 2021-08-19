@@ -18,6 +18,7 @@ export System,ThermostattedSystem,ActiveBrownianSystem
 # Callbacks
 export AbstractCallback,Callback
 export MCVBCallback,initialize!,initializeall!
+export MixedCallback
 # integrators
 export StochasticEuler,runtraj!
 # valuebaseline functions
@@ -39,6 +40,7 @@ include("gaussianmodel.jl")
 include("neuralnetwork.jl")
 include("mixedmodel.jl")
 include("callbacks.jl")
+include("mixedcallback.jl")
 include("integrators.jl")
 include("mcvb.jl")
 include("gaussianvaluebaseline.jl")
