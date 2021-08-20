@@ -72,7 +72,7 @@ end
 """
 Implementation of the Monte Carlo Value Baseline algorithm
 """
-function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...)
+function callback(cb::MCVBCallback,system::AbstractThermostattedSystem,mm::MixedModel,args...)
   # extract some arguments
   ind::Int64 = args[1]
   dt::Float64 = args[2]
@@ -108,4 +108,48 @@ function callback(cb::MCVBCallback,system::AbstractSystem,mm::MixedModel,args...
   # update the gradients of the force parameters and the value baseline parameters
   cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
   cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
+end
+
+"""
+Implementation of the Monte Carlo Value Baseline algorithm for an active particle simulation
+"""
+function callback(cb::MCVBCallback,system::AbstractActiveSystem,mm::MixedModel,args...)
+  # extract some arguments
+  ind::Int64 = args[1]
+  dt::Float64 = args[2]
+
+  # compute gradient of variable force and update ydot
+  jacobian!(cb.mvydot,system,mm.potentials[length(mm.potentials)])
+  for i in 1:system.dim
+    @. @views cb.mvydot[:,i] .*= (sqrt(dt) / system.thermostat.scale[i])
+  end
+  cb.mvy .+= (cb.mvydot*system.thermostat.rands)
+
+  # calculate value baseline function
+  vval::Float64 = callvbl(system,cb.vbl)
+
+  # compute gradient of value baseline
+  gradient!(cb.mvzdot,system,cb.vbl)
+  cb.mvz .+= (dt .* cb.mvzdot)
+
+  ### compute the instantaneous return
+  # action difference - positive term
+  cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+  # action difference - negative term
+  cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+  # compute return
+  rval::Float64 = sum(cb.em ./ (2 .* system.thermostat.scale.^2))
+
+  # add return to KL divergence
+  cb.dkl += rval*dt
+
+  # observable bias
+  aval::Float64 = cb.Afunc(system,mm,ind,dt)
+  rval += aval# + Bfunc(system,mm,ind,dt)
+  cb.aval += aval
+
+  # update the gradients of the force parameters and the value baseline parameters
+  cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
+  cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
+
 end
