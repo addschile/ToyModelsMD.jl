@@ -54,7 +54,7 @@ mutable struct ActiveLangevin <: AbstractLangevin
   rng::AbstractRNG
   rands::Vector{Float64}
   function ActiveLangevin(dim::Int64,Tt::Float64,gammat::Float64,Tr::Float64,gammar::Float64,seed::UInt64)
-    scale = ones(Float64,dim+1)
+    scale = zeros(Float64,dim)
     scale[1:dim] .= sqrt(2.0*Tt/gammat)
     scale[end] = sqrt(2.0*Tr/gammar)
     new(Tt,gammat,Tr,gammar,scale,seed,MersenneTwister(seed),[])
