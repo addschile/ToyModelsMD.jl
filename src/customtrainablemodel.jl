@@ -1,5 +1,5 @@
 ### struct for defining the Muller-Brown potential
-mutable struct CustomTrainableModel <: AbstractSinglePotential
+mutable struct CustomTrainableModel <: AbstractTrainablePotential
   dim::Int64
   nparams::Int64
   theta::Vector{Float64}
