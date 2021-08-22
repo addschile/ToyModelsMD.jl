@@ -25,7 +25,7 @@ function mcvbtrainsgd!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
                        t0::Float64,x0::Vector{Float64},lrf::Float64,lrv::Float64,
                        system::AbstractThermostattedSystem,model::MixedModel,
                        integrator::StochasticEuler,mcvb::MCVBCallback;
-                       varlr::Bool=false,lrscale::Float64=1.0,lrscaleevery::Int64=1000,
+#                       varlr::Bool=false,lrscale::Float64=1.0,lrscaleevery::Int64=1000,
                        restart=true,printevery::Int64=1,Ffile::String="coeffF",
                        Vfile::String="coeffF")
 
@@ -68,13 +68,13 @@ function mcvbtrainsgd!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
       writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
     end
 
-    # update learning rate
-    if varlr
-      if epoch % lrscaleevery
-        lrf *= lrscale
-        lrv *= lrscale
-      end
-    end
+#    # update learning rate
+#    if varlr
+#      if epoch % lrscaleevery
+#        lrf *= lrscale
+#        lrv *= lrscale
+#      end
+#    end
   
   end
 
@@ -185,13 +185,13 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
     # synchronize
     MPI.Barrier(comm)
 
-    # update learning rate
-    if varlr
-      if epoch % lrscaleevery
-        lrf *= lrscale
-        lrv *= lrscale
-      end
-    end
+#    # update learning rate
+#    if varlr
+#      if epoch % lrscaleevery
+#        lrf *= lrscale
+#        lrv *= lrscale
+#      end
+#    end
   
   end
 
@@ -278,13 +278,13 @@ function mcvbtrainadam!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
       writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
     end
   
-    # update learning rate
-    if varlr
-      if epoch % lrscaleevery
-        lrf *= lrscale
-        lrv *= lrscale
-      end
-    end
+#    # update learning rate
+#    if varlr
+#      if epoch % lrscaleevery
+#        lrf *= lrscale
+#        lrv *= lrscale
+#      end
+#    end
 
   end
 
