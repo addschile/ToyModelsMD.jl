@@ -12,7 +12,7 @@ function runtrajs!(ntraj::Int64,nsteps::Int64,dt::Float64,t0::Float64,
     system.t = t0
     initialize!(mcvb)
     runtraj!(nsteps,dt,integrator,mcvb)
-    println("Traj: $traj, ",system.x," ",mcvb.Afunc(system,model,1500,dt))
+    #println("Traj: $traj, ",system.x," ",mcvb.Afunc(system,model,1500,dt))
   end
 
 end
