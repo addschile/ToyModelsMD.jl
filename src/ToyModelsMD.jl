@@ -30,6 +30,7 @@ export NNValueBaseline
 #export sweep!,step!
 # training algorithms
 export mcvbtrainsgd!,mcvbtrainsgdpar!
+export mcvbtrainadam!,mcvbtrainadampar!
 
 include("abstracttypes.jl")
 include("potentials.jl")
