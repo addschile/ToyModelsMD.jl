@@ -27,7 +27,7 @@ function mcvbtrainsgd!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
                        integrator::StochasticEuler,mcvb::MCVBCallback;
 #                       varlr::Bool=false,lrscale::Float64=1.0,lrscaleevery::Int64=1000,
                        restart=true,printevery::Int64=1,Ffile::String="coeffF",
-                       Vfile::String="coeffF")
+                       Vfile::String="coeffV")
 
   # start optimization
   for epoch in 1:nepochs
@@ -89,7 +89,7 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
                           system::AbstractThermostattedSystem,model::MixedModel,
                           integrator::StochasticEuler,mcvb::MCVBCallback;
                           restart=true,printevery::Int64=1,Ffile::String="coeffF",
-                          Vfile::String="coeffF")
+                          Vfile::String="coeffV")
 
   comm::MPI.Comm = MPI.COMM_WORLD
   rank::Int64 = MPI.Comm_rank(comm)
@@ -207,7 +207,7 @@ function mcvbtrainadam!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
                         system::AbstractThermostattedSystem,model::MixedModel,
                         integrator::StochasticEuler,mcvb::MCVBCallback;
                         restart=true,printevery::Int64=1,Ffile::String="coeffF",
-                        Vfile::String="coeffF")
+                        Vfile::String="coeffV")
 
   # initialize extra vectors for adam algorithm
   mtf::Vector{Float64}   = zeros(Float64, size(mcvb.gradf))
@@ -300,7 +300,7 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
                           system::AbstractThermostattedSystem,model::MixedModel,
                           integrator::StochasticEuler,mcvb::MCVBCallback;
                           restart=true,printevery::Int64=1,Ffile::String="coeffF",
-                          Vfile::String="coeffF")
+                          Vfile::String="coeffV")
 
   comm::MPI.Comm = MPI.COMM_WORLD
   rank::Int64 = MPI.Comm_rank(comm)
