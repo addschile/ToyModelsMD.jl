@@ -1,5 +1,4 @@
 ### struct for defining a Gaussian force model
-#mutable struct GaussianModel2D <: AbstractPotential
 mutable struct GaussianModel2D <: AbstractSinglePotential
   dim::Int64
   nx::Int64
@@ -11,14 +10,14 @@ mutable struct GaussianModel2D <: AbstractSinglePotential
   sigx::Vector{Float64}
   sigy::Vector{Float64}
   sigt::Vector{Float64}
-  cs::Matrix{Float64}
+  theta::Matrix{Float64}
   f::Vector{Float64}
   em::Vector{Float64}
   function GaussianModel2D(nx::Int64,ny::Int64,nt::Int64,
                            mux::Vector{Float64},muy::Vector{Float64},mut::Vector{Float64},
                            sigx::Vector{Float64},sigy::Vector{Float64},sigt::Vector{Float64},
-                           cs::Matrix{Float64})
-    new(2,nx,ny,nt,mux,muy,mut,sigx,sigy,sigt,cs,zeros(Float64,2),zeros(Float64,(nx*ny*nt)))
+                           theta::Matrix{Float64})
+    new(2,nx,ny,nt,mux,muy,mut,sigx,sigy,sigt,theta,zeros(Float64,2),zeros(Float64,(nx*ny*nt)))
   end
 end
 
@@ -42,8 +41,8 @@ function force(sys::AbstractSystem, gm::GaussianModel2D)
                kron(exp.(-0.5 .* (sys.x[2] .- gm.muy).^2 ./ gm.sigy),
                     exp.(-0.5 .* (sys.x[1] .- gm.mux).^2 ./ gm.sigx))))
   fout::Vector{Float64} = zeros(Float64,2)
-  fout[1] = sum( @views gm.cs[:,1] .* gm.em )
-  fout[2] = sum( @views gm.cs[:,2] .* gm.em )
+  fout[1] = sum( @views gm.theta[:,1] .* gm.em )
+  fout[2] = sum( @views gm.theta[:,2] .* gm.em )
   return fout
 end
 
@@ -54,8 +53,8 @@ function force!(sys::AbstractSystem, gm::GaussianModel2D)
   gm.em .= vec(kron(exp.(-0.5 .* (sys.t .- gm.mut).^2 ./ gm.sigt),
                kron(exp.(-0.5 .* (sys.x[2] .- gm.muy).^2 ./ gm.sigy),
                     exp.(-0.5 .* (sys.x[1] .- gm.mux).^2 ./ gm.sigx))))
-  gm.f[1] = sum( @views gm.cs[:,1] .* gm.em )
-  gm.f[2] = sum( @views gm.cs[:,2] .* gm.em )
+  gm.f[1] = sum( @views gm.theta[:,1] .* gm.em )
+  gm.f[2] = sum( @views gm.theta[:,2] .* gm.em )
 end
 
 """
@@ -72,4 +71,20 @@ Gradient wrt parameters for gaussian model
 function gradient!(grad::Array{Float64},sys::AbstractSystem,gm::GaussianModel2D)
   grad[:,1] .= gm.em
   grad[:,2] .= gm.em
+end
+
+"""
+Update parameters for the neural network model
+"""
+function updateparams!(lr::Float64,dtheta::Vector{Float64},gm::GaussianModel2D)
+    # update coefficients for forces
+    gm.theta .+= (lr .* reshape(dtheta, (gm.nx*gm.ny*gm.nt,2)))
+end
+
+"""
+Set parameters for the neural network model
+"""
+function setparams!(theta::Vector{Float64},gm::GaussianModel2D)
+    # update coefficients for forces
+    gm.theta .= theta
 end
