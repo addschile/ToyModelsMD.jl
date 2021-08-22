@@ -88,3 +88,6 @@ function setparams!(theta::Vector{Float64},gm::GaussianModel2D)
     # update coefficients for forces
     gm.theta .= theta
 end
+
+function setparams!(gm::GaussianModel2D)
+end
