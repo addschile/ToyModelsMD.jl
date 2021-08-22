@@ -47,10 +47,10 @@ end
 """
 Set parameters for the neural network model
 """
-function setparams!(theta::Vector{Float64},gm::GaussianModel2D)
+function setparams!(theta::Vector{Float64},gm::GaussianValueBaseline2D)
     # update coefficients for forces
     vbl.theta .= theta
 end
 
-function setparams!(gm::GaussianModel2D)
+function setparams!(gm::GaussianValueBaseline2D)
 end
