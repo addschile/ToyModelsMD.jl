@@ -175,6 +175,7 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
     MPI.Barrier(comm)
     MPI.Bcast!(model.potentials[end].theta,0,comm)
     MPI.Bcast!(mcvb.vbl.theta,0,comm)
+    MPI.Barrier(comm)
     
     # change the parameters for the model on the other processors
     if rank != 0
@@ -212,12 +213,8 @@ function mcvbtrainadam!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
   # initialize extra vectors for adam algorithm
   mtf::Vector{Float64}   = zeros(Float64, size(mcvb.gradf))
   vtf::Vector{Float64}   = zeros(Float64, size(mcvb.gradf))
-  #mhatf::Vector{Float64} = zeros(Float64, size(mcvb.gradf))
-  #vhatf::Vector{Float64} = zeros(Float64, size(mcvb.gradf))
   mtv::Vector{Float64}   = zeros(Float64, size(mcvb.gradv))
   vtv::Vector{Float64}   = zeros(Float64, size(mcvb.gradv))
-  #mhatv::Vector{Float64} = zeros(Float64, size(mcvb.gradv))
-  #vhatv::Vector{Float64} = zeros(Float64, size(mcvb.gradv))
   t::Int64 = 1
 
   # start optimization
@@ -252,12 +249,6 @@ function mcvbtrainadam!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
     alphav = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
     mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
     mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
-    #mhatf .= (mtf ./ (1-beta1f^t))
-    #vhatf .= (vtf ./ (1-beta2f^t))
-    #mhatv .= (mtv ./ (1-beta1v^t))
-    #vhatv .= (vtv ./ (1-beta2v^t))
-    #mcvb.gradf .=  mhatf ./ (sqrt.(vhatf) .+ eps)
-    #mcvb.gradv .=  mhatv ./ (sqrt.(vhatv) .+ eps)
     t += 1
 
     # update coefficients for forces
@@ -316,14 +307,10 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
   if rank == 0
     gradf_buf::Vector{Float64} = zeros(Float64, size(mcvb.gradf))
     gradv_buf::Vector{Float64} = zeros(Float64, size(mcvb.gradv))
-    mtf::Vector{Float64} = similar(mcvb.gradf)
-    vtf::Vector{Float64} = similar(mcvb.gradf)
-    mhatf::Vector{Float64} = similar(mcvb.gradf)
-    vhatf::Vector{Float64} = similar(mcvb.gradf)
-    mtv::Vector{Float64} = similar(mcvb.gradv)
-    vtv::Vector{Float64} = similar(mcvb.gradv)
-    mhatv::Vector{Float64} = similar(mcvb.gradv)
-    vhatv::Vector{Float64} = similar(mcvb.gradv)
+    mtf::Vector{Float64} = zeros(Float64, size(mcvb.gradf))
+    vtf::Vector{Float64} = zeros(Float64, size(mcvb.gradf))
+    mtv::Vector{Float64} = zeros(Float64, size(mcvb.gradv))
+    vtv::Vector{Float64} = zeros(Float64, size(mcvb.gradv))
     t::Int64 = 1
   end
 
@@ -370,12 +357,10 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       vtv .= (beta2v .* vtv) .+ ((1-beta2v) .* mcvb.gradv.^2)
 
       # add bias correction to gradients
-      mhatf .= mtf ./ (1-beta1f^t)
-      vhatf .= vtf ./ (1-beta2f^t)
-      mhatv .= mtv ./ (1-beta1v^t)
-      vhatv .= vtv ./ (1-beta2v^t)
-      mcvb.gradf .=  - mhatf ./ (sqrt.(vhatf) .+ eps)
-      mcvb.gradv .=  - mhatv ./ (sqrt.(vhatv) .+ eps)
+      alphaf = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
+      alphav = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
+      mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
+      mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
       t += 1
 
       # update coefficients for forces
@@ -410,6 +395,7 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
     MPI.Barrier(comm)
     MPI.Bcast!(model.potentials[end].theta,0,comm)
     MPI.Bcast!(mcvb.vbl.theta,0,comm)
+    MPI.Barrier(comm)
     
     # change the parameters for the model on the other processors
     if rank != 0
