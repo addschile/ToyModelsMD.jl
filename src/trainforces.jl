@@ -158,7 +158,7 @@ function mcvbtrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float
       if epoch % printevery == 0
         # write updated coefficients
         writedlm(Ffile*"_$epoch.txt",model.potentials[end].theta)
-        writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
+        writedlm(Vfile*"_$epoch.txt",mcvb.vbl.theta)
       end
  
     else
@@ -245,17 +245,17 @@ function mcvbtrainadam!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
     vtv .= (beta2v .* vtv) .+ ((1-beta2v) .* mcvb.gradv.^2)
 
     # add bias correction to gradients
-    alphaf = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
-    alphav = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
+    alphaf::Float64 = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
+    alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
     mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
     mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
     t += 1
 
     # update coefficients for forces
-    updateparams!(lrf,mcvb.gradf,model.potentials[end])
+    updateparams!(alphaf,mcvb.gradf,model.potentials[end])
 
     # update coefficients for valuebaseline
-    updateparams!(lrv,mcvb.gradv,mcvb.vbl)
+    updateparams!(alphav,mcvb.gradv,mcvb.vbl)
 
     # TODO file system handling and outpout
     if restart
@@ -266,7 +266,7 @@ function mcvbtrainadam!(nepochs::Int64,ntraj::Int64,nsteps::Int64,dt::Float64,
     if epoch % printevery == 0
       # write updated coefficients
       writedlm(Ffile*"_$epoch.txt",model.potentials[end].theta)
-      writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
+      writedlm(Vfile*"_$epoch.txt",mcvb.vbl.theta)
     end
   
 #    # update learning rate
@@ -357,17 +357,17 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       vtv .= (beta2v .* vtv) .+ ((1-beta2v) .* mcvb.gradv.^2)
 
       # add bias correction to gradients
-      alphaf = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
-      alphav = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
+      alphaf::Float64 = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
+      alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
       mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
       mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
       t += 1
 
       # update coefficients for forces
-      updateparams!(lrf,mcvb.gradf,model.potentials[end])
+      updateparams!(alphaf,mcvb.gradf,model.potentials[end])
 
       # update coefficients for valuebaseline
-      updateparams!(lrv,mcvb.gradv,mcvb.vbl)
+      updateparams!(alphav,mcvb.gradv,mcvb.vbl)
 
       # TODO file system handling and outpout
       if restart
@@ -378,7 +378,7 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       if epoch % printevery == 0
         # write updated coefficients
         writedlm(Ffile*"_$epoch.txt",model.potentials[end].theta)
-        writedlm(Vfile*"_$epoch.txt",model.potentials[end].theta)
+        writedlm(Vfile*"_$epoch.txt",mcvb.vbl.theta)
       end
  
     else
