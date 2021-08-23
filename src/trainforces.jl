@@ -356,12 +356,14 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       mtv .= (beta1v .* mtv) .+ ((1-beta1v) .* mcvb.gradv)
       vtv .= (beta2v .* vtv) .+ ((1-beta2v) .* mcvb.gradv.^2)
 
-      # add bias correction to gradients
-      alphaf::Float64 = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
-      alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
-      mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
-      mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
-      t += 1
+      ## add bias correction to gradients
+      #alphaf::Float64 = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
+      #alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
+      #mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
+      #mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
+      #t += 1
+      alphaf::Float64 = lrf
+      alphav::Float64 = lrv
 
       # update coefficients for forces
       updateparams!(alphaf,mcvb.gradf,model.potentials[end])
