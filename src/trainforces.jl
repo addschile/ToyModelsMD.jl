@@ -347,7 +347,7 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
 
       # TODO make nicer with IO
       # write average quantities to stdout
-      println(mcvb.dkl," ",mcvb.aval)
+      println(mcvb.dkl," ",mcvb.aval," ",sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
       flush(stdout)
 
       # update bias corrections
@@ -365,6 +365,9 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       t += 1
       #alphaf::Float64 = lrf
       #alphav::Float64 = lrv
+
+      println(sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
+      flush(stdout)
 
       # update coefficients for forces
       updateparams!(alphaf,mcvb.gradf,model.potentials[end])
