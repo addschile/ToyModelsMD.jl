@@ -347,7 +347,7 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
 
       # TODO make nicer with IO
       # write average quantities to stdout
-      println(mcvb.dkl," ",mcvb.aval," ",sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
+      println(mcvb.dkl," ",mcvb.aval," ")#,sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
       flush(stdout)
 
       # update bias corrections
@@ -359,15 +359,15 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       # add bias correction to gradients
       alphaf::Float64 = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
       alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
-      println(alphaf," ",alphav)
+      #println(alphaf," ",alphav)
       mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
       mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
       t += 1
       #alphaf::Float64 = lrf
       #alphav::Float64 = lrv
 
-      println(sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
-      flush(stdout)
+      #println(sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
+      #flush(stdout)
 
       # update coefficients for forces
       updateparams!(alphaf,mcvb.gradf,model.potentials[end])
