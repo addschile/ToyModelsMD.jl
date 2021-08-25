@@ -4,7 +4,7 @@ using Random
 
 # model potentials
 export MullerBrown,potential,force#,force!
-export GaussianModel2D
+export GaussianModel,GaussianModelTD,GaussianModel2D
 export NNModel
 export MixedModel
 # thermostats
@@ -23,7 +23,7 @@ export MixedCallback
 export StochasticEuler,runtraj!
 # valuebaseline functions
 export AbstractValueBaseline
-export GaussianValueBaseline2D
+export GaussianValueBaseline,GaussianValueBaselineTD,GaussianValueBaseline2D
 export NNValueBaseline
 ## Monte Carlo samplers
 #export MCSampler,BiasedMCSampler
