@@ -364,7 +364,7 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
       mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
       println("mean things (f,v): ",sqrt(sum(mtf.^2))," ",sqrt(sum(mtv.^2)))
-      println("variance things (f,v): ",sqrt(sum(vtf.^2))," ",sqrt(sum(vtv.^2)))
+      println("variance things (f,v): ",sqrt(sum(vtf))," ",sqrt(sum(vtv)))
       println("grads after (f,v): ",sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
       t += 1
       #alphaf::Float64 = lrf
