@@ -361,8 +361,8 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
       #println(alphaf," ",alphav)
       println("grads before (f,v): ",sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
-      gradfscale::Float64 = sqrt(sum(vtf))
-      gradvscale::Float64 = sqrt(sum(vtv))
+      gradfscale::Float64 = sqrt(sum(vtf)) + eps
+      gradvscale::Float64 = sqrt(sum(vtv)) + eps
       mcvb.gradf .= gradfscale .* mtf ./ (sqrt.(vtf) .+ eps)
       mcvb.gradv .= gradvscale .* mtv ./ (sqrt.(vtv) .+ eps)
       println("mean things (f,v): ",sqrt(sum(mtf.^2))," ",sqrt(sum(mtv.^2)))
