@@ -360,8 +360,10 @@ function mcvbtrainadampar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Floa
       alphaf::Float64 = lrf * sqrt(1-beta2f^t) / (1-beta1f^t)
       alphav::Float64 = lrv * sqrt(1-beta2v^t) / (1-beta1v^t)
       #println(alphaf," ",alphav)
+      println(sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
       mcvb.gradf .=  mtf ./ (sqrt.(vtf) .+ eps)
       mcvb.gradv .=  mtv ./ (sqrt.(vtv) .+ eps)
+      println(sqrt(sum(mcvb.gradf.^2))," ",sqrt(sum(mcvb.gradv.^2)))
       t += 1
       #alphaf::Float64 = lrf
       #alphav::Float64 = lrv
