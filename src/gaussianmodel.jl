@@ -162,7 +162,7 @@ function setparams!(theta::Vector{Float64},gm::AbstractGaussianModel)
     gm.theta .= theta
 end
 
-function setparams!(gm::GaussianModel)
+function setparams!(gm::AbstractGaussianModel)
 end
 
 
