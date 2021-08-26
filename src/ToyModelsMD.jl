@@ -32,6 +32,7 @@ export NNValueBaseline
 # training algorithms
 export mcvbtrainsgd!,mcvbtrainsgdpar!
 export mcvbtrainadam!,mcvbtrainadampar!
+export mcvbttrainsgdpar!
 
 include("abstracttypes.jl")
 include("potentials.jl")
@@ -51,5 +52,6 @@ include("gaussianvaluebaseline.jl")
 include("nnvaluebaseline.jl")
 #include("montecarlo.jl")
 include("trainforces.jl")
+include("trainmcvbt.jl")
 
 end
