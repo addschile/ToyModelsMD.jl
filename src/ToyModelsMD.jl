@@ -5,6 +5,7 @@ using Random
 # model potentials
 export MullerBrown,potential,force#,force!
 export GaussianModel,GaussianModelTD,GaussianModel2D
+export TrainableGaussianModel,TrainableGaussianModelTD
 export NNModel
 export MixedModel
 # thermostats
@@ -39,6 +40,7 @@ include("systems.jl")
 include("activesystem.jl")
 include("mullerbrown.jl")
 include("gaussianmodel.jl")
+include("trainablegaussianmodel.jl")
 include("neuralnetwork.jl")
 include("mixedmodel.jl")
 include("callbacks.jl")
