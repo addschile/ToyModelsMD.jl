@@ -17,7 +17,7 @@ function runtrajs!(ntraj::Int64,nsteps::Int64,dt::Float64,t0::Float64,
   for traj in 1:ntraj
     system.x = copy(x0)
     system.t = t0
-    integrator.model.potentials[end].condition(sys::AbstractSystem) = forcecondition(sys,dt*rand(0:nsteps))
+#    integrator.model.potentials[end].condition(sys::AbstractSystem) = forcecondition(sys,dt*rand(0:nsteps))
     initialize!(mcvb)
     runtraj!(nsteps,dt,integrator,mcvb)
   end
