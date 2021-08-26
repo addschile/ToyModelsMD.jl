@@ -94,10 +94,22 @@ function addforce!(dt::Float64,system::AbstractSystem,model::AbstractSinglePoten
   system.x .+= dt .* model.f
 end
 
+function addforce!(dt::Float64,system::AbstractSystem,model::AbstractTrainablePotential)
+  if model.condition(system)
+    system.x .+= dt .* model.f
+  end
+end
+
 # TODO maybe take this function out since it's a repeat of the one above
 function addforce!(dt::Float64,system::ThermostattedSystem,model::AbstractSinglePotential)
   system.x .+= dt .* model.f ./ system.thermostat.gamma
 #  system.x .+= dt .* model.f
+end
+
+function addforce!(dt::Float64,system::ThermostattedSystem,model::AbstractTrainablePotential)
+  if model.condition(system)
+    system.x .+= dt .* model.f ./ system.thermostat.gamma
+  end
 end
 
 # TODO do unit tests on Overdamped system before allowing this
