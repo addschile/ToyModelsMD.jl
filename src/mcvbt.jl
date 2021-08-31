@@ -96,15 +96,15 @@ mutable struct MCVBTCallback <: AbstractCallback
       cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
       # action difference - negative term (dx/dt - F0)^2
       cb.em .-= (mm.potentials[end].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
-    #else
-#   #   println("hey")
-    #  # action difference - positive term
-    #  cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
-    #  # action difference - negative term
-    #  cb.em .-= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+    else
+#      println("hey")
+      # action difference - positive term
+      cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
+      # action difference - negative term
+      cb.em .-= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
     end
     # compute return
-    rval::Float64 = -sum(cb.em) / (2*system.thermostat.scale^2)
+    rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
   
     # add return to KL divergence
     cb.dkl += rval*dt
