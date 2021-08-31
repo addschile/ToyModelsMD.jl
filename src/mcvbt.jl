@@ -79,7 +79,8 @@ mutable struct MCVBTCallback <: AbstractCallback
   
     # compute gradient of variable force and update ydot
     jacobian!(cb.mvydot,system,mm.potentials[length(mm.potentials)])
-    cb.mvydot .*= (sqrt(dt)/system.thermostat.scale)
+    cb.mvydot .*= 1.0/(sqrt(dt)*system.thermostat.scale)
+    #cb.mvydot .*= (sqrt(dt)/system.thermostat.scale)
     cb.mvy .+= (cb.mvydot*system.thermostat.rands)
   
     # calculate value baseline function
@@ -99,12 +100,12 @@ mutable struct MCVBTCallback <: AbstractCallback
     else
 #      println("hey")
       # action difference - positive term
-      cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
+      cb.em .= -((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
       # action difference - negative term
-      cb.em .-= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+      cb.em .+= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
     end
     # compute return
-    rval::Float64 = -sum(cb.em) / (2*system.thermostat.scale^2)
+    rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
   
     # add return to KL divergence
     cb.dkl += rval*dt
