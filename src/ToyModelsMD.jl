@@ -19,6 +19,7 @@ export System,ThermostattedSystem,ActiveBrownianSystem
 # Callbacks
 export AbstractCallback,Callback
 export MCVBCallback,initialize!,initializeall!
+export MCVBTCallback,initialize!,initializeall!
 export MixedCallback
 # integrators
 export StochasticEuler,runtraj!
@@ -48,6 +49,7 @@ include("callbacks.jl")
 include("mixedcallback.jl")
 include("integrators.jl")
 include("mcvb.jl")
+include("mcvbt.jl")
 include("gaussianvaluebaseline.jl")
 include("nnvaluebaseline.jl")
 #include("montecarlo.jl")

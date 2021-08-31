@@ -11,7 +11,7 @@ end
 
 function runtrajs!(ntraj::Int64,nsteps::Int64,dt::Float64,t0::Float64,
                    x0::Vector{Float64},system::AbstractThermostattedSystem,
-                   integrator::StochasticEuler,mcvb::MCVBCallback)
+                   integrator::StochasticEuler,mcvb::MCVBTCallback)
 
   # run trajectories for evaluating gradients
   for traj in 1:ntraj
@@ -35,7 +35,7 @@ Train forces using stochastic gradient descent method with parallelization
 function mcvbttrainsgdpar!(nepochs::Int64,totntraj::Int64,nsteps::Int64,dt::Float64,
                            t0::Float64,x0::Vector{Float64},lrf::Float64,lrv::Float64,
                            system::AbstractThermostattedSystem,model::MixedModel,
-                           integrator::StochasticEuler,mcvb::MCVBCallback;
+                           integrator::StochasticEuler,mcvb::MCVBTCallback;
                            restart=true,printevery::Int64=1,Ffile::String="coeffF",
                            Vfile::String="coeffV")
 
