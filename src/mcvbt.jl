@@ -92,18 +92,22 @@ mutable struct MCVBTCallback <: AbstractCallback
   
     ### compute the instantaneous return
 #    println(mm.potentials[end].condition(system))
-    if mm.potentials[end].condition(system)
-      # action difference - positive term (dx/dt - Ftot)^2
-      cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
-      # action difference - negative term (dx/dt - F0)^2
-      cb.em .-= (mm.potentials[end].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
-    else
-#      println("hey")
-      # action difference - positive term
-      cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
-      # action difference - negative term
-      cb.em .-= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
-    end
+    #if mm.potentials[end].condition(system)
+    #  # action difference - positive term (dx/dt - Ftot)^2
+    #  cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+    #  # action difference - negative term (dx/dt - F0)^2
+    #  cb.em .-= (mm.potentials[end].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+    #else
+#   #   println("hey")
+    #  # action difference - positive term
+    #  cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
+    #  # action difference - negative term
+    #  cb.em .-= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+    #end
+    # action difference - positive term (dx/dt - Ftot)^2
+    cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+    # action difference - negative term (dx/dt - F0)^2
+    cb.em .-= (mm.potentials[end].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
     # compute return
     rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
   
