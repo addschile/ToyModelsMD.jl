@@ -72,7 +72,7 @@ mutable struct MCVBTCallback <: AbstractCallback
   """
   Implementation of the Monte Carlo Value Baseline algorithm
   """
-  function callback(cb::MCVBCTallback,system::AbstractThermostattedSystem,mm::MixedModel,args...)
+  function callback(cb::MCVBTCallback,system::AbstractThermostattedSystem,mm::MixedModel,args...)
     # extract some arguments
     ind::Int64 = args[1]
     dt::Float64 = args[2]
