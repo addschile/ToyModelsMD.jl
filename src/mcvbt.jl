@@ -99,9 +99,9 @@ mutable struct MCVBTCallback <: AbstractCallback
     else
 #      println("hey")
       # action difference - positive term
-      cb.em .= -((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
+      cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands .- mm.potentials[end].f).^2
       # action difference - negative term
-      cb.em .+= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+      cb.em .-= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
     end
     # compute return
     rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
