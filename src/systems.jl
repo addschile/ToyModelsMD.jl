@@ -86,7 +86,9 @@ function addforce!(dt::Float64,system::ThermostattedSystem,model::AbstractSingle
 end
 
 function addforce!(dt::Float64,system::ThermostattedSystem,model::AbstractTrainablePotential)
+  println(system.t)
   if model.condition(system)
+    println("hey")
     system.x .+= dt .* model.f ./ system.thermostat.gamma
   end
 end
