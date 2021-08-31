@@ -41,27 +41,6 @@ function ThermostattedSystem(model::AbstractPotential,thermostat::AbstractThermo
   ThermostattedSystem(dim,0.0,x,f,thermostat)
 end
 
-"""
-Generic struct for a system with a thermostat
-"""
-mutable struct ThermostattedSystem <: AbstractThermostattedSystem
-  dim::Int64
-  t::Float64
-  x::Vector{Float64}
-  f::Vector{Float64}
-  thermostat::AbstractThermostat
-  function ThermostattedSystem(dim::Int64,t::Float64,x::Vector{Float64},f::Vector{Float64},thermostat::AbstractThermostat)
-    new(dim,t,x,f,thermostat)
-  end
-end
-
-function ThermostattedSystem(model::AbstractPotential,thermostat::AbstractThermostat)
-  dim::Int64 = getdimensionality(model)
-  x::Vector{Float64} = zeros(dim)
-  f::Vector{Float64} = zeros(dim)
-  ThermostattedSystem(dim,0.0,x,f,thermostat)
-end
-
 #"""
 #Struct for an overdamped system with a langevin thermostat
 #"""
