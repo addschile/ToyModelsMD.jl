@@ -54,7 +54,7 @@ end
 struct for defining a time-dependent Gaussian force model
 make sure the last set of basis functions is the time-dependence
 """
-mutable struct TrainableGaussianModelTD <: AbstractGaussianModel
+mutable struct TrainableGaussianModelTD <: AbstractTrainableGaussianModel
   dim::Int64
   nbasis::Int64
   shape::Tuple{Vararg{Int64}}
