@@ -99,8 +99,8 @@ function gennoise!(dim::Int64,langevin::AbstractLangevin)
   r2::Float64 = rand(Float64)
   theta::Float64 = 2.0*4.0*atan(1.0)*r1
   r::Float64 = sqrt(-2.0*log(r2))
-  langevin.rands[1] = r*cos(theta)
-  langevin.rands[2] = r*sin(theta)
+  langevin.rands[1] = 1.0#r*cos(theta)
+  langevin.rands[2] = 1.0#r*sin(theta)
 end
 
 """
