@@ -85,4 +85,6 @@ function force!(system::AbstractSystem, mb::MullerBrown)
   mb.f[1] = -sum( mb.A.*(2 .*mb.a.*mb.em[1:4] .+ mb.b.*mb.em[5:8]).*mb.em[9:12])
   mb.f[2] = -sum( mb.A.*(2 .*mb.c.*mb.em[5:8] .+ mb.b.*mb.em[1:4]).*mb.em[9:12])
   println(mb.em[1:4])
+  println(mb.em[5:8])
+  println(mb.em[9:12])
 end
