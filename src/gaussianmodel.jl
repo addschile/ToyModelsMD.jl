@@ -222,7 +222,7 @@ function force!(sys::AbstractSystem, gm::GaussianModel2D)
                     exp.(-0.5 .* (sys.x[1] .- gm.mux).^2 ./ gm.sigx))))
   gm.f[1] = sum( @views gm.theta[:,1] .* gm.em )
   gm.f[2] = sum( @views gm.theta[:,2] .* gm.em )
-  println(gm.f)
+  #println(gm.f)
 end
 
 """
