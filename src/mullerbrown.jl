@@ -87,4 +87,5 @@ function force!(system::AbstractSystem, mb::MullerBrown)
   println(mb.em[1:4])
   println(mb.em[5:8])
   println(mb.em[9:12])
+  exit()
 end
