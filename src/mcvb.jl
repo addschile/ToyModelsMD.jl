@@ -95,7 +95,7 @@ function callback(cb::MCVBCallback,system::AbstractThermostattedSystem,mm::Mixed
   # action difference - negative term
   cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
   # compute return
-  rval::Float64 = sum(cb.em)# / (2*system.thermostat.scale^2)
+  rval::Float64 = sum(cb.em) / (2*system.thermostat.scale^2)
 
   # add return to KL divergence
   cb.dkl += rval*dt
