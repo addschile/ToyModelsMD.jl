@@ -140,11 +140,18 @@ function computebasis!(sys::AbstractSystem, gm::TrainableGaussianModel)
 end
 
 function computebasis!(sys::AbstractSystem, gm::TrainableGaussianModelTD)
-  k::Vector{Float64} = exp.( -0.5 .* (sys.x[1] .- gm.mus[1]).^2 ./ gm.sigs[1] )
-  for i in 2:gm.dim
-    k = vec( k * (exp.( -0.5 .* (sys.x[i] .- gm.mus[i]).^2 ./ gm.sigs[i] ))' )
+  # backward
+  gmdim::Int64 = gm.dim+1
+  k::Vector{Float64} = exp.( -0.5 .* (sys.t .- gm.mus[gmdim]).^2 ./ gm.sigs[gmdim] )
+  for i in 1:gm.dim
+    k = vec( k * (exp.( -0.5 .* (sys.x[gmdim-i] .- gm.mus[gmdim-i]).^2 ./ gm.sigs[gmdim-i] ))' )
   end
-  k = vec( k * (exp.( -0.5 .* (sys.t .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
+  # forward
+  #k::Vector{Float64} = exp.( -0.5 .* (sys.x[1] .- gm.mus[1]).^2 ./ gm.sigs[1] )
+  #for i in 2:gm.dim
+  #  k = vec( k * (exp.( -0.5 .* (sys.x[i] .- gm.mus[i]).^2 ./ gm.sigs[i] ))' )
+  #end
+  #k = vec( k * (exp.( -0.5 .* (sys.t .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
   gm.em .= k
 end
 
