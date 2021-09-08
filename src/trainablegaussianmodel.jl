@@ -147,11 +147,17 @@ function computebasis!(sys::AbstractSystem, gm::TrainableGaussianModelTD)
   #  k = vec( k * (exp.( -0.5 .* (sys.x[gmdim-i] .- gm.mus[gmdim-i]).^2 ./ gm.sigs[gmdim-i] ))' )
   #end
   # forward
-  k::Vector{Float64} = exp.( -0.5 .* (sys.x[1] .- gm.mus[1]).^2 ./ gm.sigs[1] )
+  #k::Vector{Float64} = exp.( -0.5 .* (sys.x[1] .- gm.mus[1]).^2 ./ gm.sigs[1] )
+  #for i in 2:gm.dim
+  #  k = vec( k * (exp.( -0.5 .* (sys.x[i] .- gm.mus[i]).^2 ./ gm.sigs[i] ))' )
+  #end
+  #k = vec( k * (exp.( -0.5 .* (sys.t .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
+  #gm.em .= k
+  k::Vector{Float64} = exp.( -0.5 .* (0.63 .- gm.mus[1]).^2 ./ gm.sigs[1] )
   for i in 2:gm.dim
-    k = vec( k * (exp.( -0.5 .* (sys.x[i] .- gm.mus[i]).^2 ./ gm.sigs[i] ))' )
+    k = vec( k * (exp.( -0.5 .* (0.03 .- gm.mus[i]).^2 ./ gm.sigs[i] ))' )
   end
-  k = vec( k * (exp.( -0.5 .* (sys.t .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
+  k = vec( k * (exp.( -0.5 .* (0.0 .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
   gm.em .= k
 end
 
@@ -179,7 +185,8 @@ function force!(sys::AbstractSystem, gm::AbstractTrainableGaussianModel; compbas
   for i in 1:gm.dim
     gm.f[i] = sum( @views gm.theta[:,i] .* gm.em )
   end
-  #println(gm.f)
+  println(gm.f)
+  exit()
 end
 
 """
