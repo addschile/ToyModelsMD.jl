@@ -73,4 +73,5 @@ function force!(system::AbstractSystem, mb::MullerBrown)
   @. @views mb.em[9:12] = exp.(mb.a.*(mb.em[1:4].^2) + mb.b.*(mb.em[1:4].*mb.em[5:8]) + mb.c.*(mb.em[5:8].^2))
   mb.f[1] = -sum(@. @views mb.A.*(2 .*mb.a.*mb.em[1:4] + mb.b.*mb.em[5:8]).*mb.em[9:12])
   mb.f[2] = -sum(@. @views mb.A.*(2 .*mb.c.*mb.em[5:8] + mb.b.*mb.em[1:4]).*mb.em[9:12])
+  println(mb.f)
 end
