@@ -91,9 +91,9 @@ function callback(cb::MCVBCallback,system::AbstractThermostattedSystem,mm::Mixed
 
   ### compute the instantaneous return
   # action difference - positive term
-  #cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+  cb.em .= ((system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
   # action difference - negative term
-  cb.em .= -(mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
+  cb.em .-= (mm.potentials[length(mm.potentials)].f .+ (system.thermostat.scale/sqrt(dt)) .* system.thermostat.rands).^2
   # compute return
   rval::Float64 = sum(cb.em)# / (2*system.thermostat.scale^2)
 
