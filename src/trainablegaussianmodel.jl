@@ -183,7 +183,8 @@ function force!(sys::AbstractSystem, gm::AbstractTrainableGaussianModel; compbas
     computebasis!(sys,gm)
   end
   for i in 1:gm.dim
-    gm.f[i] = sum( @views gm.theta[:,i] .* gm.em )
+    #gm.f[i] = sum( @views gm.theta[:,i] .* gm.em )
+    gm.f[i] = sum( gm.theta[:,i] .* gm.em )
   end
   println(gm.f)
   exit()
