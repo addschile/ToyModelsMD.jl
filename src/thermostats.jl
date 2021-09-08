@@ -91,7 +91,8 @@ function gennoises!(nsteps::Int64,dim::Int64,langevin::AbstractLangevin)
 end
 
 function gennoise!(dim::Int64,langevin::AbstractLangevin)
-  langevin.rands = randn(langevin.rng,Float64,dim)
+  #langevin.rands = randn(langevin.rng,Float64,dim)
+  langevin.rands .= 1.0#randn(langevin.rng,Float64,dim)
 end
 
 #function gennoise!(dim::Int64,langevin::AbstractLangevin)
