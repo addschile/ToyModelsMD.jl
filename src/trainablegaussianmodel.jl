@@ -182,14 +182,14 @@ function force!(sys::AbstractSystem, gm::AbstractTrainableGaussianModel; compbas
   if compbasis
     computebasis!(sys,gm)
   end
-  for i in 1:length(gm.em)
-    println(gm.em[i])
-  end
+  #for i in 1:length(gm.em)
+  #  println(gm.em[i])
+  #end
   for i in 1:gm.dim
     gm.f[i] = sum( @views gm.theta[:,i] .* gm.em )
   end
   #println(gm.f)
-  exit()
+  #exit()
 end
 
 """
