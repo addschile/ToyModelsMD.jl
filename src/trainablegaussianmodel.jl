@@ -145,7 +145,6 @@ function computebasis!(sys::AbstractSystem, gm::TrainableGaussianModelTD)
   for i in 2:gm.dim
     k = vec( k * (exp.( -0.5 .* (sys.x[i] .- gm.mus[i]).^2 ./ gm.sigs[i] ))' )
   end
-  println(sys.t)
   k = vec( k * (exp.( -0.5 .* (sys.t .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
   gm.em .= k
 end
