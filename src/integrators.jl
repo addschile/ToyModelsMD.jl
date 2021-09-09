@@ -71,7 +71,6 @@ function runtraj!(nsteps::Int64,dt::Float64,int::StochasticEuler,cb::AbstractCal
 end
 
 function step!(ind::Int64,dt::Float64,int::StochasticEuler,cb::AbstractCallback)
-  #println(int.system.x)
   # forward euler-murayama integrator
   # compute force for drift
   force!(int.system,int.model)
