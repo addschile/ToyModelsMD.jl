@@ -1,3 +1,4 @@
+using DelimitedFiles
 abstract type AbstractGaussianModel <: AbstractSinglePotential end
 
 ### struct for defining a Gaussian force model
@@ -88,6 +89,12 @@ function computebasis!(sys::AbstractSystem, gm::GaussianModelTD)
   end
   k = vec( k * (exp.( -0.5 .* (sys.t .- gm.mus[end]).^2 ./ gm.sigs[end] ))' )
   gm.em .= k
+  #k::Vector{Float64} = ones(Float64,length(gm.mus[1]))
+  #for i in 2:gm.dim
+  #  k = vec( k * (ones(Float64,length(gm.mus[i])))' )
+  #end
+  #k = vec( k * (ones(Float64,length(gm.mus[end])))' )
+  #gm.em .= 1.0
 end
 
 """

@@ -1,3 +1,4 @@
+using MPI
 struct DummyThermostat <: AbstractThermostat; end
 
 # TODO need to be able to thermostat DoFs individually!!!!
@@ -92,7 +93,29 @@ end
 
 function gennoise!(dim::Int64,langevin::AbstractLangevin)
   langevin.rands = randn(langevin.rng,Float64,dim)
+  #langevin.rands[1] = -0.1
+  #langevin.rands[2] = 0.1
+  #comm = MPI.COMM_WORLD
+  #rank::Int64 = MPI.Comm_rank(comm)
+  #MPI.Barrier(comm)
+  #if rank == 0
+  #  println(langevin.rands[1])
+  #  println(langevin.rands[2])
+  #else
+  #  sleep(0.005)
+  #  println(langevin.rands[1])
+  #  println(langevin.rands[2])
+  #end
   #langevin.rands .= 1.0
+  #if rank==0
+  #  langevin.rands .= 1.0
+  #elseif rank==1
+  #  langevin.rands .= 2.0
+  #elseif rank==2
+  #  langevin.rands .= 3.0
+  #else
+  #  langevin.rands .= 4.0
+  #end
 end
 
 #function gennoise!(dim::Int64,langevin::AbstractLangevin)

@@ -81,6 +81,7 @@ function callback(cb::MCVBCallback,system::AbstractThermostattedSystem,mm::Mixed
   jacobian!(cb.mvydot,system,mm.potentials[length(mm.potentials)])
   cb.mvydot .*= (sqrt(dt)/system.thermostat.scale)
   cb.mvy .+= (cb.mvydot*system.thermostat.rands)
+  #cb.mvy .+= (cb.mvydot*ones(Float64,2))
 
   # calculate value baseline function
   vval::Float64 = callvbl(system,cb.vbl)
@@ -106,8 +107,10 @@ function callback(cb::MCVBCallback,system::AbstractThermostattedSystem,mm::Mixed
   cb.aval += aval
 
   # update the gradients of the force parameters and the value baseline parameters
-  cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
-  cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
+  #cb.gradf .+= (rval .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
+  #cb.gradv .+= (rval .* cb.mvz) .- (vval .* cb.mvzdot)
+  cb.gradf .+= (1.0 .* cb.mvy) .- ((vval/dt) .* (cb.mvydot*system.thermostat.rands))
+  cb.gradv .+= (1.0 .* cb.mvz) .- (vval .* cb.mvzdot)
 end
 
 #"""

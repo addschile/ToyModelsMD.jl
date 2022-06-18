@@ -8,11 +8,21 @@ function runtrajs!(ntraj::Int64,nsteps::Int64,dt::Float64,t0::Float64,
 
   # run trajectories for evaluating gradients
   for traj in 1:ntraj
+    #println(traj)
     system.x = copy(x0)
     system.t = t0
     initialize!(mcvb)
     runtraj!(nsteps,dt,integrator,mcvb)
-    #println("Traj: $traj, ",system.x," ",mcvb.Afunc(system,model,1500,dt))
+    #runtraj!(1,dt,integrator,mcvb)
+    # call callback on more time?
+    force!(system,model)
+    system.x = [0.0,1.0]
+    aval::Float64 = mcvb.Afunc(system,model,nsteps+1,dt)
+    println(aval)
+    # update the gradients of the force parameters and the value baseline parameters
+    mcvb.gradf .+= (aval .* mcvb.mvy)
+    mcvb.gradv .+= (aval .* mcvb.mvz)
+    println("Traj: $traj, ",system.x," ",mcvb.Afunc(system,model,1500,dt))
   end
 
 end

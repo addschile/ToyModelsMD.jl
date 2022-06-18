@@ -105,4 +105,18 @@ integrator = StochasticEuler(system,model)
 runtraj!(steps,dt,integrator,mcvb)
 println(mcvb.dkl)
 writedlm("gradf.txt",mcvb.gradf)
-writedlm("gradv.txt",mcvb.gradv*dt)
+writedlm("gradv.txt",mcvb.gradv)
+#mcvb.gradf .*= dt
+#mcvb.gradv .*= dt
+
+av_dx = readdlm("avishek_data/new_delomegax.txt")
+av_dy = readdlm("avishek_data/new_delomegay.txt")
+av_dv = readdlm("avishek_data/new_delV.txt")
+
+println(sum(mcvb.gradf[1:Mx*My*Mt] .- av_dx))
+println(sum(mcvb.gradf[Mx*My*Mt+1:end] .- av_dy))
+println(sum(mcvb.gradv .- av_dv))
+
+writedlm("diff_dx.txt",mcvb.gradf[1:Mx*My*Mt] .- av_dx)
+writedlm("diff_dy.txt",mcvb.gradf[Mx*My*Mt+1:end] .- av_dy)
+writedlm("diff_dv.txt",mcvb.gradv .- av_dv)
